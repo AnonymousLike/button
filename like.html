@@ -157,10 +157,16 @@
         $('.count span').text(count);
       }
       
+      // Update button style.
+      function updateStyle() {
+        $('#icon').toggleClass('fa-lock fa-check');
+        $('.btn').css('cursor', 'default');
+      }
+      
       // Disable the like button.
       function disableBtn() {
         $('#like').attr('disabled', true);
-        $('#icon').toggleClass('fa-lock fa-check');
+        updateStyle();
       }
 
       // Retrieve and render count.
@@ -194,6 +200,9 @@
 
       // Update count.
       $('#like').on('click', function (e) {
+        // Disable button before incrementing count.
+        $(this).attr('disabled', true);
+        
         likeObj.increment('count');
         likeObj.save().then(function (item) {
           likeObj = item;
@@ -202,7 +211,7 @@
           // Remember like.
           localStorage.url = url;
           
-          disableBtn();
+          updateStyle();
         });
       });
     }).call(this);
