@@ -6,6 +6,11 @@
   <title>Anonymous Like</title>
   <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+
     body {
       background: transparent;
       overflow: hidden;
@@ -21,7 +26,7 @@
     }
 
     table {
-      border-spacing: 2px;
+      border-spacing: 0px;
       border-color: gray;
     }
 
@@ -39,6 +44,7 @@
       line-height: 20px;
       text-shadow: 0 -1px 0 #141823;
       white-space: nowrap;
+      padding-right: 7px;
     }
 
     .btn i {
@@ -58,6 +64,7 @@
       padding: 0 3px;
       text-align: center;
       white-space: nowrap;
+      border-radius: 2px;
     }
 
     .nub {
@@ -103,7 +110,7 @@
             </div>
           <!--</form>-->
         </td>
-        
+
         <!-- Count -->
         <td>
           <div class="count">
@@ -117,21 +124,21 @@
       </tr>
     </tbody>
   </table>
-  
+
   </div>
-  
+
   <script type="text/javascript">
     // Todo List
     // =========
     //
     // - Normalize URL (Facebook debugger?)
-    
+
     (function () {
       'use strict';
-      
+
       // So secert, do no abuse!!!
       Parse.initialize("Pfx7Q4qTar92RiUQfGWdBeqLk9yUCQlWHT8r5LDt", "W1R2kFLnlUL4gIQ17q21CBmZ0Pe8mNzLZ1HvGu71");
-    
+
       var Like  = Parse.Object.extend("like");
       var query = new Parse.Query(Like);
       var data  = window.document.location.search;
@@ -139,12 +146,12 @@
       var url   = json.url;
       var title = json.title;
       var likeObj;
-    
+
       // Update count.
       function updateCount(count) {
         $('.count span').text(count);
       }
-    
+
       // Retrieve and render count.
       query.equalTo('url', url);
       query.first({
@@ -154,7 +161,7 @@
             likeObj = item;
             return updateCount(likeObj.get('count'));
           }
-        
+
           // New URL, and initialize.
           likeObj = new Like();
           likeObj.save({
@@ -167,16 +174,16 @@
           console.error(err); // FIXME
         },
       });
-      
+
       // Update count.
       $('#like').on('click', function (e) {
         var btn = this;
-        
+
         likeObj.increment('count');
         likeObj.save().then(function (item) {
           likeObj = item;
           updateCount(likeObj.get('count'));
-          
+
           $(btn).attr('disabled', true);
           $('#icon').toggleClass('fa-lock fa-check');
         });
