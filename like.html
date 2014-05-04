@@ -91,6 +91,28 @@
       left: 1px;
       top: -7px;
     }
+
+    #like:hover {
+        opacity:0.9;
+    }
+    #like .fa {
+        display:none;
+    }
+    #like .fa.fa-lock {
+        display:inline-block;
+    }
+    #like.liked .fa.fa-lock {
+        display:none;
+    }
+    #like.liked .fa.fa-check {
+        display:inline-block;
+    }
+    #like.liked:hover .fa.fa-check {
+        display:none;
+    }
+    #like.liked:hover .fa.fa-times {
+        display:inline-block;
+    }
   </style>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
@@ -105,7 +127,7 @@
             <div>
               <div class="btn-container">
                 <div class="btn-image">
-                  <button id="like" class="btn" type="submit"><i id="icon" class="fa fa-lock"></i> Like</button>
+                  <button id="like" class="btn" type="submit"><i class="fa fa-lock"></i><i class="fa fa-check"></i><i class="fa fa-times"></i> Like</button>
                 </div>
               </div>
             </div>
@@ -158,18 +180,6 @@
         $('.count span').text(count);
       }
 
-      // Update button style.
-      function updateStyle() {
-        $('#icon').toggleClass('fa-lock fa-check');
-        $('.btn').css('cursor', 'default');
-      }
-
-      // Disable the like button.
-      function disableBtn() {
-        $('#like').attr('disabled', true);
-        updateStyle();
-      }
-
       // Retrieve and render count.
       query.equalTo('url', url);
       query.first({
@@ -185,34 +195,43 @@
           likeObj.save({
             title: title,
             url  : url,
-            count: 0,
+            count: 0
           });
         },
         error: function (err) {
           console.error(err); // FIXME
-        },
+        }
       });
 
       // Determine if already liked via local storage.
       // console.log('URL: ' + localStorage.url);
       if (localStorage.url === url) {
-        disableBtn();
+          $('#like').addClass('liked');
       }
 
       // Update count.
       $('#like').on('click', function (e) {
         // Disable button before incrementing count.
-        $(this).attr('disabled', true);
+        var liking = !$(this).hasClass('liked');
+        $('#like').toggleClass('liked');
+        if(liking) {
+            likeObj.increment('count');
+        }
+        else {
+           likeObj.increment('count', -1);
+        }
 
-        likeObj.increment('count');
         likeObj.save().then(function (item) {
           likeObj = item;
           updateCount(likeObj.get('count'));
 
-          // Remember like.
-          localStorage.url = url;
-
-          updateStyle();
+          if(liking) {
+            // Remember like.
+            localStorage.url = url;
+          }
+          else {
+            localStorage.url = "";
+          }
         });
       });
     }).call(this);
