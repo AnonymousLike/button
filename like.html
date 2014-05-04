@@ -142,14 +142,25 @@
       var Like  = Parse.Object.extend("like");
       var query = new Parse.Query(Like);
       var data  = window.document.location.search;
-      var json  = JSON.parse(decodeURIComponent(data.substr(1)));
-      var url   = json.url;
-      var title = json.title;
-      var likeObj;
+      var json, url, title, likeObj;
+      if (data) {
+        json  = JSON.parse(decodeURIComponent(data.substr(1)));
+        url   = json.url;
+        title = json.title;
+      } else {
+        url   = window.location.toString();
+        title = window.document.title;
+      }
 
       // Update count.
       function updateCount(count) {
         $('.count span').text(count);
+      }
+      
+      // Disable the like button.
+      function disableBtn() {
+        $('#like').attr('disabled', true);
+        $('#icon').toggleClass('fa-lock fa-check');
       }
 
       // Retrieve and render count.
@@ -174,18 +185,24 @@
           console.error(err); // FIXME
         },
       });
+      
+      // Determine if already liked via local storage.
+      // console.log('URL: ' + localStorage.url);
+      if (localStorage.url === url) {
+        disableBtn();
+      }
 
       // Update count.
       $('#like').on('click', function (e) {
-        var btn = this;
-
         likeObj.increment('count');
         likeObj.save().then(function (item) {
           likeObj = item;
           updateCount(likeObj.get('count'));
 
-          $(btn).attr('disabled', true);
-          $('#icon').toggleClass('fa-lock fa-check');
+          // Remember like.
+          localStorage.url = url;
+          
+          disableBtn();
         });
       });
     }).call(this);
