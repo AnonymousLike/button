@@ -45,6 +45,7 @@
       text-shadow: 0 -1px 0 #141823;
       white-space: nowrap;
       padding-right: 7px;
+      padding-left: 2px;
     }
 
     .btn i {
@@ -156,13 +157,13 @@
       function updateCount(count) {
         $('.count span').text(count);
       }
-      
+
       // Update button style.
       function updateStyle() {
         $('#icon').toggleClass('fa-lock fa-check');
         $('.btn').css('cursor', 'default');
       }
-      
+
       // Disable the like button.
       function disableBtn() {
         $('#like').attr('disabled', true);
@@ -191,7 +192,7 @@
           console.error(err); // FIXME
         },
       });
-      
+
       // Determine if already liked via local storage.
       // console.log('URL: ' + localStorage.url);
       if (localStorage.url === url) {
@@ -202,7 +203,7 @@
       $('#like').on('click', function (e) {
         // Disable button before incrementing count.
         $(this).attr('disabled', true);
-        
+
         likeObj.increment('count');
         likeObj.save().then(function (item) {
           likeObj = item;
@@ -210,7 +211,7 @@
 
           // Remember like.
           localStorage.url = url;
-          
+
           updateStyle();
         });
       });
